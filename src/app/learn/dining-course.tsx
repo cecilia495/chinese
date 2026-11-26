@@ -12,6 +12,7 @@ import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { scenarioTotal, type DiningLesson } from "@/lib/dining";
 import { diningCopy } from "@/lib/dining-i18n";
 import { dictionaries, type Locale } from "@/lib/i18n";
+import { SupportLanguagePicker } from "@/app/components/support-language-picker";
 import { PracticeCompletion } from "@/app/components/practice-completion";
 import { Favorite } from "@/app/vocabulary/favorite";
 import { diningVocabulary } from "@/lib/vocabulary";
@@ -202,6 +203,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
 
   return (
     <>
+      <SupportLanguagePicker />
       <ol className="lesson-steps">
         {t.steps.map((label, index) => (
           <li key={label} aria-current={step === index ? "step" : undefined}>

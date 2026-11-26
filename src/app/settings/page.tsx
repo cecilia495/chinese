@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
-
-import { isSupportLanguage, supportLanguages } from "@/lib/support-languages";
+import { SupportLanguagePicker } from "@/app/components/support-language-picker";
 
 export default function SettingsPage() {
   const preferences = useGuestPreferences();
@@ -11,17 +10,7 @@ export default function SettingsPage() {
     <Link className="back" href="/">返回首页</Link>
     <h1>学习设置</h1>
     <div className="panel topic-filters">
-      <label>辅助解释语言
-        <select value={preferences.support} onChange={(event) => {
-          const support = event.target.value;
-          if (isSupportLanguage(support)) {
-            saveGuestPreferences({ ...preferences, support, translation: support !== "zh" });
-          }
-        }}>
-          {Object.entries(supportLanguages).map(([code, name]) =>
-            <option key={code} value={code} lang={code} dir={code === "ar" ? "rtl" : "ltr"}>{name}</option>)}
-        </select>
-      </label>
+      <SupportLanguagePicker />
       <label>当前 HSK 等级
         <select value={preferences.level} onChange={(event) => {
           const level = event.target.value;
