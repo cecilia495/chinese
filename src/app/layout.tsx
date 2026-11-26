@@ -23,6 +23,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
               <span className="brand-text"><strong lang="zh-Hans">中文伴</strong><span>{t.footer}</span></span>
             </Link>
             <nav className="header-controls" aria-label={t.settings}>
+              <Link className="pill" href="/settings/">学习设置</Link>
               <Link className="pill" href="/learn/" aria-label="选择 HSK 课程">
                 HSK 1–3 <ChevronDown size={14} aria-hidden="true" />
               </Link>

@@ -129,10 +129,11 @@ export function LessonRecorder({ t, onRecorded, onRecordingStart, onStateChange,
         objectUrl.current = null;
       }
       setResult(undefined);
-    } catch {
+    } catch (failure) {
       stream.current?.getTracks().forEach((track) => track.stop());
       if (active.current) {
-        setError(t.recordError);
+        setError(failure instanceof DOMException && failure.name === "NotAllowedError"
+          ? t.microphoneDenied : t.recordError);
         changeState("idle");
       }
     }

@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useGuestPreferences } from "@/lib/guest-preferences";
 import { getDiningLesson } from "@/lib/dining";
 import { courseSnapshot, subscribe } from "../learn/dining-course";
 
@@ -12,16 +13,18 @@ function snapshot() {
 }
 
 export function GuestLearning() {
+  const { level: currentLevel } = useGuestPreferences();
   const value = useSyncExternalStore(subscribe, snapshot, () => "");
   const records = value ? value.split("\n").map((entry) => JSON.parse(entry) as {
-    step: number; completed: number[]; guided: number[]; finishedAttempts?: number;
+    completed: number[]; finishedAttempts?: number;
   }) : [];
   return <article className="panel">
+    <p>当前等级：HSK {currentLevel}</p>
     <p>访客记录保存在当前浏览器标签页会话中，不会跨设备同步。</p>
     <ul>{levels.map((level, index) => {
       const lesson = getDiningLesson(level);
       const record = records[index];
-      const finished = record?.finishedAttempts ?? (record?.step === 4 ? 1 : 0);
+      const finished = record?.finishedAttempts ?? (record?.completed.includes(3) ? 1 : 0);
       return <li key={level}>
         <Link href={`/learn/${level}/`}>HSK {level} · {lesson?.title.zh}</Link>
         <p>已完成环节 {record?.completed.length ?? 0}/4 · 完成练习 {finished} 次</p>

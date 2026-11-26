@@ -1,5 +1,6 @@
 "use client";
 
+import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
 import { publicPath } from "@/lib/public-path";
 
 
@@ -74,8 +75,11 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
   const state: CourseState = JSON.parse(snapshot);
   const [savedKeys, setSavedKeys] = useState(favorites);
   const [subtitle, setSubtitle] = useState(false);
-  const [translation, setTranslation] = useState(false);
-  const [pinyin, setPinyin] = useState(true);
+  const preferences = useGuestPreferences();
+  const { pinyin, translation } = preferences;
+  const englishHelp = preferences.support === "en";
+  const setPinyin = (value: boolean) => saveGuestPreferences({ ...preferences, pinyin: value });
+  const setTranslation = (value: boolean) => saveGuestPreferences({ ...preferences, translation: value });
   const [ai, setAi] = useState<boolean>();
   const [sending, setSending] = useState(false);
   const [scenarioError, setScenarioError] = useState("");
@@ -87,6 +91,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
   const vocabulary = entries[state.word] ?? entries[0];
   const phrase = lesson.repeat[state.repeat] ?? lesson.repeat[0];
   const showAi = aiAvailable && (ai ?? state.turns.length > 0);
+  const listeningAnswered = lesson.questions.every((_, index) => state.answers[index] != null);
   const stepReady = [
     true,
     lesson.questions.every((question, index) => state.answers[index] === question.correct),
@@ -105,7 +110,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
       ? state.completionId ?? crypto.randomUUID()
       : state.completionId;
     const finishedAttempts = complete && next >= t.steps.length
-      ? (state.finishedAttempts ?? 0) + 1
+      ? (state.finishedAttempts ?? (state.completed.includes(3) ? 1 : 0)) + 1
       : state.finishedAttempts;
     update({ step: next, completed, completionId, finishedAttempts });
     requestAnimationFrame(() => document.getElementById("lesson-current-step")?.focus());
@@ -167,7 +172,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             setAi(undefined);
             setDraft("");
             setScenarioError("");
-            saveCourse(key, { ...initialState, finishedAttempts: state.finishedAttempts ?? 1 });
+            saveCourse(key, { ...initialState, finishedAttempts: state.finishedAttempts ?? (state.completed.includes(3) ? 1 : 0) });
             requestAnimationFrame(() => document.getElementById("lesson-current-step")?.focus());
           }}>{t.retry}</button>
         </>}>
@@ -206,9 +211,9 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               <div>
                 <p className="lesson-phrase" lang="zh-Hans">{word.text}</p>
                 {pinyin && <p lang="zh-Latn">{word.pinyin}</p>}
-                <p>{vocabulary.definition[locale]}</p>
+                <p lang={englishHelp ? "en" : "zh-Hans"}>{vocabulary.definition[preferences.support]}</p>
                 <blockquote lang="zh-Hans">{word.example}</blockquote>
-                {locale === "en" && <p>{vocabulary.exampleEn}</p>}
+                {englishHelp && translation && <p lang="en">{vocabulary.exampleEn}</p>}
                 {canSave && <Favorite key={vocabulary.key} locale={locale} wordKey={vocabulary.key}
                   saved={savedKeys.includes(vocabulary.key)} commit={(saved) => setSavedKeys((current) =>
                     saved ? [...current, vocabulary.key] : current.filter((key) => key !== vocabulary.key))} />}
@@ -225,15 +230,15 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             <LessonAudio src={audio("dialogue")} t={t} />
             <div className="lesson-options">
               <label className="lesson-check"><input type="checkbox" checked={subtitle} onChange={(event) => setSubtitle(event.target.checked)} />{t.subtitle}</label>
-              {locale === "en" && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
+              {englishHelp && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
             </div>
-            {(subtitle || (locale === "en" && translation)) && (
+            {(subtitle || listeningAnswered || (englishHelp && translation)) && (
               <ul className="transcript">
                 {lesson.dialogue.map((line) => (
                   <li key={line.text}>
                     <strong>{t[line.role]}</strong>
-                    {subtitle && <span lang="zh-Hans">{line.text}</span>}
-                    {locale === "en" && translation && <span>{line.en}</span>}
+                    {(subtitle || listeningAnswered) && <span lang="zh-Hans">{line.text}</span>}
+                    {englishHelp && translation && <span>{line.en}</span>}
                   </li>
                 ))}
               </ul>
@@ -241,7 +246,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             {lesson.questions.map((question, index) => (
               <div className="lesson-question" key={question.text}>
                 <p lang="zh-Hans">{question.text}</p>
-                {locale === "en" && translation && <p>{question.en}</p>}
+                {englishHelp && translation && <p>{question.en}</p>}
                 <div className="lesson-options" lang="zh-Hans">
                   {question.options.map((option, choice) => (
                     <button className="lesson-secondary" type="button" key={option}
@@ -255,6 +260,14 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                 {state.answers[index] != null && <p role="status">{state.answers[index] === question.correct ? t.correct : t.incorrect}</p>}
               </div>
             ))}
+            {listeningAnswered && <section aria-label={t.answerReview}>
+              <h3>{t.answerReview}</h3>
+              <ol>{lesson.questions.map((question) => <li key={question.text}>
+                <strong lang="zh-Hans" dir="ltr">{question.options[question.correct]}</strong>
+                <blockquote lang="zh-Hans" dir="ltr">{lesson.dialogue[question.evidence].text}</blockquote>
+                {englishHelp && translation && <p lang="en">{lesson.dialogue[question.evidence].en}</p>}
+              </li>)}</ol>
+            </section>}
             <details className="lesson-listen-record">
               <summary>{t.recordAnswer}</summary>
               <LessonRecorder t={t} />
@@ -274,11 +287,11 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             <div className="lesson-phrase-box">
               <p className="lesson-phrase" lang="zh-Hans">{phrase.text}</p>
               {pinyin && <p lang="zh-Latn">{phrase.pinyin}</p>}
-              {locale === "en" && translation && <p>{phrase.en}</p>}
+              {englishHelp && translation && <p>{phrase.en}</p>}
             </div>
             <div className="lesson-options">
               <label className="lesson-check"><input type="checkbox" checked={pinyin} onChange={(event) => setPinyin(event.target.checked)} />{t.pinyin}</label>
-              {locale === "en" && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
+              {englishHelp && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
             </div>
             <LessonAudio key={phrase.id} src={audio(phrase.id)} t={t} />
             <LessonRecorder key={`record-${phrase.id}`} t={t} onRecorded={() => setRecorded(true)} />
@@ -294,7 +307,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               </div>
             )}
             {!showAi && <p>{t.practicePrompt}</p>}
-            {locale === "en" && (
+            {englishHelp && (
               <label className="lesson-check">
                 <input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}
               </label>
@@ -304,7 +317,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                 <p className="status">{t.aiDisclosure}</p>
                 <ul className="transcript">
                   <li><strong>{t.server}</strong><span lang="zh-Hans">{lesson.scenario[0].prompt}</span>
-                    {locale === "en" && translation && <span>{lesson.scenario[0].en}</span>}</li>
+                    {englishHelp && translation && <span>{lesson.scenario[0].en}</span>}</li>
                   {state.turns.map((turn, index) => (
                     <li key={index}>
                       <strong>{t.customer}</strong><span lang="zh-Hans">{turn.order}</span>
@@ -328,12 +341,12 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                   return (
                     <div className="lesson-question" key={turn.prompt}>
                       <p><strong>{t.server}</strong> <span lang="zh-Hans">{turn.prompt}</span></p>
-                      {locale === "en" && translation && <p>{turn.en}</p>}
+                      {englishHelp && translation && <p>{turn.en}</p>}
                       {selected ? (
                         <>
                           <p><strong>{t.customer}</strong> <span lang="zh-Hans">{selected.text}</span></p>
                           <p><strong>{t.server}</strong> <span lang="zh-Hans">{selected.reply}</span></p>
-                          {locale === "en" && translation && <p>{selected.en}</p>}
+                          {englishHelp && translation && <p>{selected.en}</p>}
                         </>
                       ) : (
                         <div className="lesson-options" aria-label={t.response}>
@@ -347,7 +360,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                   );
                 })}
                 {guidedTotal && <p><strong>{t.server}</strong> <span lang="zh-Hans">一共{guidedTotal.text}元。</span>
-                  {locale === "en" && translation && <> · {guidedTotal.number} yuan in total.</>}</p>}
+                  {englishHelp && translation && <> · {guidedTotal.number} yuan in total.</>}</p>}
                 {state.guided.length === lesson.scenario.length && <p role="status">{t.guidedDone}</p>}
               </div>
             )}

@@ -3,7 +3,7 @@ import type { Level } from "./learner";
 type Translation = { en: string; zh: string };
 type Phrase = { id: string; text: string; pinyin: string; en: string };
 type Word = Phrase & { outlineId: number; image: string; example: string };
-type Question = { text: string; en: string; options: readonly string[]; correct: number };
+type Question = { text: string; en: string; options: readonly string[]; correct: number; evidence: number };
 type Line = { role: "server" | "customer"; text: string; en: string };
 type ScenarioTurn = {
   prompt: string;
@@ -38,8 +38,8 @@ const lessons: Record<DiningLesson["level"], DiningLesson> = {
       { role: "customer", text: "我想喝茶。谢谢！", en: "I’d like tea. Thank you!" },
     ],
     questions: [
-      { text: "客人想吃什么？", en: "What would the customer like to eat?", options: ["米饭", "面条儿", "面包"], correct: 1 },
-      { text: "客人想喝什么？", en: "What would the customer like to drink?", options: ["水", "咖啡", "茶"], correct: 2 },
+      { text: "客人想吃什么？", en: "What would the customer like to eat?", options: ["米饭", "面条儿", "面包"], correct: 1, evidence: 1 },
+      { text: "客人想喝什么？", en: "What would the customer like to drink?", options: ["水", "咖啡", "茶"], correct: 2, evidence: 3 },
     ],
     repeat: [
       { id: "eat", text: "我想吃面条儿。", pinyin: "Wǒ xiǎng chī miàntiáor.", en: "I’d like noodles." },
@@ -71,8 +71,8 @@ const lessons: Record<DiningLesson["level"], DiningLesson> = {
       { role: "server", text: "好的，鱼和米饭。", en: "Okay, fish and rice." },
     ],
     questions: [
-      { text: "客人问什么好不好吃？", en: "What dish does the customer ask about?", options: ["鱼", "米饭", "面条儿"], correct: 0 },
-      { text: "客人还想吃什么？", en: "What else does the customer want to eat?", options: ["面包", "米饭", "菜"], correct: 1 },
+      { text: "客人问什么好不好吃？", en: "What dish does the customer ask about?", options: ["鱼", "米饭", "面条儿"], correct: 0, evidence: 0 },
+      { text: "客人还想吃什么？", en: "What else does the customer want to eat?", options: ["面包", "米饭", "菜"], correct: 1, evidence: 2 },
     ],
     repeat: [
       { id: "choose", text: "你想吃鱼还是面条儿？", pinyin: "Nǐ xiǎng chī yú háishi miàntiáor?", en: "Would you like fish or noodles?" },
@@ -105,8 +105,8 @@ const lessons: Record<DiningLesson["level"], DiningLesson> = {
       { role: "server", text: "面条儿是十八元，茶是七元，一共二十五元。", en: "The noodles are 18 yuan and the tea is 7 yuan. It’s 25 yuan in total." },
     ],
     questions: [
-      { text: "客人先要看什么？", en: "What does the customer ask to see first?", options: ["菜单", "饮料", "筷子"], correct: 0 },
-      { text: "一共多少钱？", en: "How much does it all cost?", options: ["十八元", "七元", "二十五元"], correct: 2 },
+      { text: "客人先要看什么？", en: "What does the customer ask to see first?", options: ["菜单", "饮料", "筷子"], correct: 0, evidence: 0 },
+      { text: "一共多少钱？", en: "How much does it all cost?", options: ["十八元", "七元", "二十五元"], correct: 2, evidence: 3 },
     ],
     repeat: [
       { id: "order", text: "我要一碗面条儿，还要一杯茶。", pinyin: "Wǒ yào yì wǎn miàntiáor, hái yào yì bēi chá.", en: "I’d like a bowl of noodles and a cup of tea." },
