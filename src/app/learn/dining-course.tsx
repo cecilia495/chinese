@@ -252,12 +252,12 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               <label className="lesson-check"><input type="checkbox" checked={subtitle} onChange={(event) => setSubtitle(event.target.checked)} />{t.subtitle}</label>
               {hasTranslation && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
             </div>
-            {(subtitle || listeningAnswered || (hasTranslation && translation)) && (
+            {subtitle && (
               <ul className="transcript">
                 {lesson.dialogue.map((line) => (
                   <li key={line.text}>
                     <strong>{t[line.role]}</strong>
-                    {(subtitle || listeningAnswered) && <span lang="zh-Hans" dir="ltr">{line.text}</span>}
+                    <span lang="zh-Hans" dir="ltr">{line.text}</span>
                     {hasTranslation && translation && <span>{translated(line.en)}</span>}
                   </li>
                 ))}
@@ -270,7 +270,10 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                 <div className="lesson-options" lang="zh-Hans" dir="ltr">
                   {question.options.map((option, choice) => (
                     <button className="lesson-secondary" type="button" key={option}
-                      aria-pressed={state.answers[index] === choice} onClick={() => {
+                      aria-pressed={state.answers[index] === choice}
+                      data-answer={state.answers[index] === choice
+                        ? (choice === question.correct ? "correct" : "incorrect") : undefined}
+                      onClick={() => {
                         const answers = [...state.answers];
                         answers[index] = choice;
                         update({ answers });
