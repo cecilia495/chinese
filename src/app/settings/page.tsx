@@ -1,17 +1,20 @@
 "use client";
 
+import { useInterface } from "@/app/components/site-frame";
+
 import Link from "next/link";
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
 import { SupportLanguagePicker } from "@/app/components/support-language-picker";
 
 export default function SettingsPage() {
+  const { t } = useInterface();
   const preferences = useGuestPreferences();
   return <section className="subpage lesson practice">
-    <Link className="back" href="/">返回首页</Link>
-    <h1>学习设置</h1>
+    <Link className="back" href="/">{t("back")}</Link>
+    <h1>{t("settings")}</h1>
     <div className="panel topic-filters">
       <SupportLanguagePicker />
-      <label>当前 HSK 等级
+      <label>{t("level")}
         <select value={preferences.level} onChange={(event) => {
           const level = event.target.value;
           if (level === "1" || level === "2" || level === "3") saveGuestPreferences({ ...preferences, level });
@@ -20,11 +23,11 @@ export default function SettingsPage() {
         </select>
       </label>
       <label className="lesson-check"><input type="checkbox" checked={preferences.pinyin}
-        onChange={(event) => saveGuestPreferences({ ...preferences, pinyin: event.target.checked })} />显示拼音</label>
+        onChange={(event) => saveGuestPreferences({ ...preferences, pinyin: event.target.checked })} />{t("pinyin")}</label>
       <label className="lesson-check"><input type="checkbox" checked={preferences.translation} disabled={preferences.support === "zh"}
-        onChange={(event) => saveGuestPreferences({ ...preferences, translation: event.target.checked })} />显示辅助语言译文</label>
+        onChange={(event) => saveGuestPreferences({ ...preferences, translation: event.target.checked })} />{t("translation")}</label>
     </div>
-    <p>此设置用于餐厅课程的词义、例句和对话等教学内容。界面语言为中文，练习语言为普通话。偏好保存在此浏览器中，修改后立即生效。</p>
-    <Link className="button" href={`/learn/${preferences.level}/`}>打开 HSK {preferences.level} 课程</Link>
+    <p>{t("preferenceNote")}</p>
+    <Link className="button" href={`/learn/${preferences.level}/`}>{t("open")} · HSK {preferences.level}</Link>
   </section>;
 }

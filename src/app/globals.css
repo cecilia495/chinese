@@ -279,3 +279,11 @@ blockquote { margin: 1rem 0 0; padding: .7rem 1rem; border-inline-start: 3px sol
   border-radius: .5rem;
   font: inherit;
 }
+
+[dir="rtl"] .lesson-navigation svg {
+  transform: scaleX(-1);
+}
+.header-controls {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}

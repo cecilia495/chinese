@@ -4,9 +4,10 @@ import { useSyncExternalStore } from "react";
 import { isSupportLanguage, type SupportLanguage } from "./support-languages";
 
 const key = "zhongwenban:guest-preferences";
-const defaults = { support: "zh", pinyin: true, translation: false, level: "1" } as const;
+const defaults = { support: "zh", interfaceLanguage: "zh", pinyin: true, translation: false, level: "1" } as const;
 type Preferences = {
   support: SupportLanguage;
+  interfaceLanguage: SupportLanguage;
   pinyin: boolean;
   translation: boolean;
   level: "1" | "2" | "3";
@@ -36,6 +37,7 @@ export function useGuestPreferences(): Preferences {
   try {
     const value = JSON.parse(snapshot);
     return {
+      interfaceLanguage: isSupportLanguage(value?.interfaceLanguage) ? value.interfaceLanguage : "zh",
       support: isSupportLanguage(value?.support) ? value.support : "zh",
       pinyin: value?.pinyin !== false,
       translation: value?.translation === true,

@@ -1,0 +1,60 @@
+import type { SupportLanguage } from "./support-languages";
+
+const labels = {
+  home: ["首页", "Home", "Accueil", "Главная", "الرئيسية", "Inicio"],
+  back: ["返回首页", "Back to home", "Retour à l’accueil", "На главную", "العودة إلى الرئيسية", "Volver al inicio"],
+  skip: ["跳到主内容", "Skip to content", "Aller au contenu", "К содержанию", "انتقل إلى المحتوى", "Saltar al contenido"],
+  interface: ["界面语言", "Interface language", "Langue de l’interface", "Язык интерфейса", "لغة الواجهة", "Idioma de la interfaz"],
+  support: ["辅助解释语言", "Explanation language", "Langue des explications", "Язык пояснений", "لغة الشرح", "Idioma de las explicaciones"],
+  settings: ["学习设置", "Learning settings", "Paramètres d’apprentissage", "Настройки обучения", "إعدادات التعلّم", "Ajustes de aprendizaje"],
+  level: ["当前 HSK 等级", "Current HSK level", "Niveau HSK actuel", "Текущий уровень HSK", "مستوى HSK الحالي", "Nivel HSK actual"],
+  choose: ["选择 HSK 课程", "Choose an HSK lesson", "Choisir une leçon HSK", "Выбрать урок HSK", "اختر درس HSK", "Elige una lección HSK"],
+  guest: ["访客体验", "Guest experience", "Mode invité", "Гостевой режим", "وضع الزائر", "Modo invitado"],
+  headline: ["让中文走进你的日常。", "Make Chinese part of your day.", "Faites du chinois une langue du quotidien.", "Пусть китайский станет частью вашего дня.", "اجعل الصينية جزءًا من يومك.", "Haz del chino parte de tu día."],
+  intro: ["从日常对话开始，自信地说普通话。", "Build confidence in Mandarin through everyday conversations.", "Prenez confiance en mandarin grâce à des conversations du quotidien.", "Говорите на китайском увереннее в повседневных ситуациях.", "تحدّث الماندرين بثقة من خلال محادثات يومية.", "Gana confianza en mandarín con conversaciones cotidianas."],
+  available: ["HSK 1–3 · 餐厅点餐课程已开放", "HSK 1–3 · Restaurant lessons available", "HSK 1–3 · Leçons au restaurant disponibles", "HSK 1–3 · Доступны уроки о заказе в ресторане", "HSK 1–3 · دروس طلب الطعام متاحة", "HSK 1–3 · Lecciones de restaurante disponibles"],
+  learningNav: ["学习入口", "Learning options", "Parcours d’apprentissage", "Варианты обучения", "خيارات التعلّم", "Opciones de aprendizaje"],
+  topics: ["主题学习", "Learn by topic", "Apprendre par thème", "Обучение по темам", "التعلّم حسب الموضوع", "Aprender por temas"],
+  roleplay: ["情景口语", "Role-play", "Jeu de rôle", "Ролевая практика", "تمثيل الأدوار", "Práctica de situaciones"],
+  learning: ["我的学习", "My learning", "Mon apprentissage", "Моё обучение", "تعلّمي", "Mi aprendizaje"],
+  stepwise: ["逐步学习", "Learn step by step", "Apprendre pas à pas", "Учиться шаг за шагом", "التعلّم خطوة بخطوة", "Aprender paso a paso"],
+  wordsToTalk: ["从认识新词到开口完成一段对话。", "Go from new words to your first conversation.", "Découvrez de nouveaux mots et utilisez-les dans une conversation.", "Выучите новые слова и используйте их в разговоре.", "تعلّم كلمات جديدة واستخدمها في محادثة.", "Aprende palabras nuevas y úsalas en una conversación."],
+  realTopics: ["练习日常生活中的对话。", "Practise conversations from everyday life.", "Entraînez-vous à converser dans des situations du quotidien.", "Отрабатывайте разговоры из повседневной жизни.", "تدرّب على محادثات من الحياة اليومية.", "Practica conversaciones de la vida cotidiana."],
+  start: ["开始学习", "Start learning", "Commencer", "Начать обучение", "ابدأ التعلّم", "Empezar a aprender"],
+  explore: ["浏览话题", "Explore topics", "Explorer les thèmes", "Смотреть темы", "استكشف الموضوعات", "Explorar temas"],
+  free: ["自由交流", "Free talk", "Conversation libre", "Свободный разговор", "محادثة حرّة", "Conversación libre"],
+  coming: ["即将开放", "Coming soon", "Bientôt disponible", "Скоро", "قريبًا", "Próximamente"],
+  developing: ["开发中", "In development", "En développement", "В разработке", "قيد التطوير", "En desarrollo"],
+  talkStatus: ["访客版提供餐厅课程和引导式点餐。AI 自由交流尚未开放。", "Restaurant lessons and guided ordering are available. AI free talk is still in development.", "Les leçons au restaurant et la commande guidée sont disponibles. La conversation libre avec l’IA est en développement.", "Доступны уроки о ресторане и практика заказа с подсказками. Свободный разговор с ИИ пока разрабатывается.", "تتوفر دروس المطعم وتمارين الطلب الموجّهة. المحادثة الحرّة مع الذكاء الاصطناعي قيد التطوير.", "Ya están disponibles las lecciones de restaurante y los pedidos guiados. La conversación libre con IA sigue en desarrollo."],
+  open: ["打开课程", "Open lessons", "Ouvrir les leçons", "Открыть уроки", "افتح الدروس", "Abrir lecciones"],
+  restaurant: ["餐厅主题课程", "Restaurant lessons", "Leçons au restaurant", "Уроки о ресторане", "دروس المطعم", "Lecciones de restaurante"],
+  domains: ["主题领域", "Topic area", "Domaine thématique", "Раздел тем", "المجال", "Área temática"],
+  allDomains: ["全部领域", "All areas", "Tous les domaines", "Все разделы", "جميع المجالات", "Todas las áreas"],
+  search: ["搜索话题", "Search topics", "Rechercher un thème", "Поиск тем", "ابحث عن موضوع", "Buscar temas"],
+  searchExample: ["例如：点餐、问路、购物", "E.g. ordering, directions, shopping", "Ex. commander, s’orienter, faire des achats", "Например: заказ, дорога, покупки", "مثال: الطلب، الاتجاهات، التسوّق", "P. ej., pedir, orientarse, comprar"],
+  filter: ["已开放等级", "Available levels", "Niveaux disponibles", "Доступные уровни", "المستويات المتاحة", "Niveles disponibles"],
+  allStatuses: ["全部状态", "All statuses", "Tous les statuts", "Любой статус", "جميع الحالات", "Todos los estados"],
+  noTopics: ["没有符合条件的话题。", "No matching topics.", "Aucun thème correspondant.", "Подходящих тем нет.", "لا توجد موضوعات مطابقة.", "No hay temas que coincidan."],
+  diningImage: ["餐厅点餐场景", "Ordering at a restaurant", "Commande au restaurant", "Заказ в ресторане", "طلب الطعام في مطعم", "Pedido en un restaurante"],
+  diningSummary: ["HSK 1–3 · 看图、听对话、跟读并完成点餐练习。", "HSK 1–3 · Look, listen, repeat and practise ordering.", "HSK 1–3 · Observez, écoutez, répétez et entraînez-vous à commander.", "HSK 1–3 · Рассматривайте картинки, слушайте, повторяйте и учитесь заказывать.", "HSK 1–3 · شاهد واستمع وكرّر وتدرّب على طلب الطعام.", "HSK 1–3 · Mira, escucha, repite y practica cómo hacer un pedido."],
+  pinyin: ["显示拼音", "Show pinyin", "Afficher le pinyin", "Показать пиньинь", "أظهر البينيين", "Mostrar pinyin"],
+  translation: ["显示辅助语言译文", "Show translations", "Afficher les traductions", "Показать переводы", "أظهر الترجمات", "Mostrar traducciones"],
+  preferenceNote: ["练习语言为普通话。偏好保存在此浏览器中。", "Practice is in Mandarin. Preferences are saved in this browser.", "Les exercices se font en mandarin. Vos préférences sont enregistrées dans ce navigateur.", "Практика проходит на китайском. Настройки сохраняются в этом браузере.", "التدريب بالماندرين. تُحفَظ التفضيلات في هذا المتصفح.", "La práctica es en mandarín. Los ajustes se guardan en este navegador."],
+  sessionNote: ["访客记录仅保存在当前标签页。", "Guest progress stays in this tab.", "La progression en mode invité reste dans cet onglet.", "Прогресс гостя сохраняется в этой вкладке.", "يبقى تقدّم الزائر في علامة التبويب هذه.", "El progreso de invitado se conserva en esta pestaña."],
+  steps: ["已完成环节", "Steps completed", "Étapes terminées", "Пройденные шаги", "الخطوات المكتملة", "Pasos completados"],
+  attempts: ["完成练习次数", "Completed attempts", "Tentatives terminées", "Завершённые попытки", "المحاولات المكتملة", "Intentos completados"],
+  taskDone: ["已完成点餐任务", "Ordering task complete", "Commande terminée", "Задание по заказу выполнено", "اكتملت مهمة الطلب", "Tarea de pedido completada"],
+  taskPending: ["待完成点餐任务", "Ordering task pending", "Commande à terminer", "Задание по заказу не завершено", "مهمة الطلب قيد الإنجاز", "Tarea de pedido pendiente"],
+  review: ["复习表达", "Phrases to review", "Expressions à revoir", "Фразы для повторения", "عبارات للمراجعة", "Expresiones para repasar"],
+  downloads: ["下载中文伴源码", "Download the source", "Télécharger le code source", "Скачать исходный код", "نزّل الشفرة المصدرية", "Descargar el código fuente"],
+  fullZip: ["完整源码与课程资源", "Full source and course assets", "Code et ressources du cours", "Исходный код и материалы курса", "الشفرة ومواد الدروس", "Código y materiales del curso"],
+  codeZip: ["源码与配置", "Source and configuration", "Code et configuration", "Код и настройки", "الشفرة والإعدادات", "Código y configuración"],
+  assetsZip: ["课程图片与音频", "Course images and audio", "Images et enregistrements", "Изображения и аудио", "صور الدروس وتسجيلاتها", "Imágenes y audio del curso"],
+} as const;
+
+export const languageIndex = { zh: 0, en: 1, fr: 2, ru: 3, ar: 4, es: 5 } as const;
+export type InterfaceLabel = keyof typeof labels;
+
+export function interfaceText(language: SupportLanguage, label: InterfaceLabel) {
+  return labels[label][languageIndex[language]];
+}

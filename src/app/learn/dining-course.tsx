@@ -1,6 +1,7 @@
 "use client";
 
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
+import { interfaceText } from "@/lib/interface-text";
 import { diningTranslation } from "@/lib/dining-translations";
 import { publicPath } from "@/lib/public-path";
 
@@ -11,7 +12,7 @@ import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { scenarioTotal, type DiningLesson } from "@/lib/dining";
 import { diningCopy } from "@/lib/dining-i18n";
-import { dictionaries, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
 import { SupportLanguagePicker } from "@/app/components/support-language-picker";
 import { PracticeCompletion } from "@/app/components/practice-completion";
 import { Favorite } from "@/app/vocabulary/favorite";
@@ -79,14 +80,15 @@ function saveCourse(key: string, state: CourseState) {
 }
 
 export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites, canSave }: Props) {
-  const t = diningCopy[locale];
-  const common = dictionaries[locale];
+
   const key = `dining:v1:${viewerKey}:${lesson.level}`;
   const snapshot = useSyncExternalStore(subscribe, () => courseSnapshot(key), serverSnapshot);
   const state: CourseState = JSON.parse(snapshot);
   const [savedKeys, setSavedKeys] = useState(favorites);
   const [subtitle, setSubtitle] = useState(false);
   const preferences = useGuestPreferences();
+  const language = canSave ? locale : preferences.interfaceLanguage;
+  const t = diningCopy[language];
   const { pinyin, translation } = preferences;
   const { support } = preferences;
   const hasTranslation = support !== "zh";
@@ -181,7 +183,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
 
   if (step >= t.steps.length) {
     return (
-      <PracticeCompletion title={t.finished} home={common.back} footer={<p className="lesson-next-status">{t.noNext}</p>}
+      <PracticeCompletion title={t.finished} home={interfaceText(language, "back")} footer={<p className="lesson-next-status">{t.noNext}</p>}
         actions={<>
           <Link className="lesson-secondary" href="/topics">{t.practiceTopic}</Link>
           <button className="lesson-secondary" type="button" onClick={() => {

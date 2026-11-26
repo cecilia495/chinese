@@ -3,6 +3,8 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useGuestPreferences } from "@/lib/guest-preferences";
+import { useInterface } from "@/app/components/site-frame";
+import { diningTranslation } from "@/lib/dining-translations";
 import { getDiningLesson } from "@/lib/dining";
 import { courseSnapshot, subscribe } from "../learn/dining-course";
 
@@ -13,23 +15,24 @@ function snapshot() {
 }
 
 export function GuestLearning() {
+  const { language, t } = useInterface();
   const { level: currentLevel } = useGuestPreferences();
   const value = useSyncExternalStore(subscribe, snapshot, () => "");
   const records = value ? value.split("\n").map((entry) => JSON.parse(entry) as {
     completed: number[]; finishedAttempts?: number;
   }) : [];
   return <article className="panel">
-    <p>当前等级：HSK {currentLevel}</p>
-    <p>访客记录保存在当前浏览器标签页会话中，不会跨设备同步。</p>
+    <p>{t("level")} · <bdi dir="ltr">HSK {currentLevel}</bdi></p>
+    <p>{t("sessionNote")}</p>
     <ul>{levels.map((level, index) => {
       const lesson = getDiningLesson(level);
       const record = records[index];
       const finished = record?.finishedAttempts ?? (record?.completed.includes(3) ? 1 : 0);
       return <li key={level}>
-        <Link href={`/learn/${level}/`}>HSK {level} · {lesson?.title.zh}</Link>
-        <p>已完成环节 {record?.completed.length ?? 0}/4 · 完成练习 {finished} 次</p>
-        <p>{finished ? "已完成点餐情景任务" : "待完成点餐情景任务"}</p>
-        <p>复习表达：{lesson?.repeat.map((phrase) => phrase.text).join("　")}</p>
+        <Link href={`/learn/${level}/`}><bdi dir="ltr">HSK {level}</bdi> · {lesson && (language === "zh" ? lesson.title.zh : diningTranslation(lesson.title.en, language))}</Link>
+        <p>{t("steps")} <bdi dir="ltr">{record?.completed.length ?? 0}/4</bdi> · {t("attempts")} {finished}</p>
+        <p>{t(finished ? "taskDone" : "taskPending")}</p>
+        <p>{t("review")} · <bdi lang="zh-Hans" dir="ltr">{lesson?.repeat.map((phrase) => phrase.text).join("　")}</bdi></p>
       </li>;
     })}</ul>
   </article>;

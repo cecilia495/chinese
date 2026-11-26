@@ -1,11 +1,14 @@
 "use client";
 
+import { useInterface } from "@/app/components/site-frame";
+
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
 import { isSupportLanguage, supportLanguages } from "@/lib/support-languages";
 
 export function SupportLanguagePicker() {
+  const { t } = useInterface();
   const preferences = useGuestPreferences();
-  return <label className="support-language-picker">辅助解释语言
+  return <label className="support-language-picker">{t("support")}
     <select value={preferences.support} onChange={(event) => {
       const support = event.target.value;
       if (!isSupportLanguage(support)) return;
