@@ -21,6 +21,7 @@ type Turn = { order: string; reply: string };
 type CourseState = {
   step: number;
   completionId?: string;
+  finishedAttempts?: number;
   word: number;
   repeat: number;
   completed: number[];
@@ -37,7 +38,7 @@ const initialState: CourseState = {
 const initialSnapshot = JSON.stringify(initialState);
 const memory = new Map<string, string>();
 
-function subscribe(callback: () => void) {
+export function subscribe(callback: () => void) {
   window.addEventListener(storageEvent, callback);
   return () => window.removeEventListener(storageEvent, callback);
 }
@@ -46,7 +47,7 @@ function serverSnapshot() {
   return initialSnapshot;
 }
 
-function courseSnapshot(key: string) {
+export function courseSnapshot(key: string) {
   try {
     return sessionStorage.getItem(key) ?? memory.get(key) ?? initialSnapshot;
   } catch {
@@ -103,7 +104,10 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
     const completionId = canSave && next >= t.steps.length
       ? state.completionId ?? crypto.randomUUID()
       : state.completionId;
-    update({ step: next, completed, completionId });
+    const finishedAttempts = complete && next >= t.steps.length
+      ? (state.finishedAttempts ?? 0) + 1
+      : state.finishedAttempts;
+    update({ step: next, completed, completionId, finishedAttempts });
     requestAnimationFrame(() => document.getElementById("lesson-current-step")?.focus());
   }
 
@@ -163,7 +167,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             setAi(undefined);
             setDraft("");
             setScenarioError("");
-            saveCourse(key, initialState);
+            saveCourse(key, { ...initialState, finishedAttempts: state.finishedAttempts ?? 1 });
             requestAnimationFrame(() => document.getElementById("lesson-current-step")?.focus());
           }}>{t.retry}</button>
         </>}>
