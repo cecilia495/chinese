@@ -1,6 +1,7 @@
 "use client";
 
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
+import { diningTranslation } from "@/lib/dining-translations";
 import { publicPath } from "@/lib/public-path";
 
 
@@ -16,6 +17,15 @@ import { Favorite } from "@/app/vocabulary/favorite";
 import { diningVocabulary } from "@/lib/vocabulary";
 import { CompletionRecord } from "./completion-record";
 import { LessonAudio, LessonRecorder } from "./lesson-audio";
+
+const priceCopy = {
+  zh: (number: number) => `${number} 元`,
+  en: (number: number) => `${number} yuan in total`,
+  fr: (number: number) => `${number} yuans au total`,
+  ru: (number: number) => `Всего ${number} юаней`,
+  ar: (number: number) => `المجموع ${number} يوانًا`,
+  es: (number: number) => `${number} yuanes en total`,
+};
 
 type Answer = number | null;
 type Turn = { order: string; reply: string };
@@ -77,7 +87,13 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
   const [subtitle, setSubtitle] = useState(false);
   const preferences = useGuestPreferences();
   const { pinyin, translation } = preferences;
-  const englishHelp = preferences.support === "en";
+  const { support } = preferences;
+  const hasTranslation = support !== "zh";
+  function translated(english: string) {
+    if (support === "zh") return null;
+    const text = diningTranslation(english, support);
+    return text ? <span lang={support} dir={support === "ar" ? "rtl" : "ltr"}>{text}</span> : null;
+  }
   const setPinyin = (value: boolean) => saveGuestPreferences({ ...preferences, pinyin: value });
   const setTranslation = (value: boolean) => saveGuestPreferences({ ...preferences, translation: value });
   const [ai, setAi] = useState<boolean>();
@@ -199,7 +215,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
         <h2 id="lesson-current-step" tabIndex={-1}>{t.steps[step]}</h2>
         {step === 0 && (
           <>
-            <div className="lesson-options" lang="zh-Hans">
+            <div className="lesson-options" lang="zh-Hans" dir="ltr">
               {lesson.words.map((entry, index) => (
                 <button className="lesson-secondary" type="button" key={entry.id} aria-pressed={index === state.word} onClick={() => update({ word: index })}>
                   {entry.text}
@@ -207,13 +223,13 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               ))}
             </div>
             <div className="lesson-word">
-              <Image src={publicPath(`/images/dining/${word.image}.webp`)} alt={word.text} lang="zh-Hans" width={500} height={300} />
+              <Image src={publicPath(`/images/dining/${word.image}.webp`)} alt={word.text} lang="zh-Hans" dir="ltr" width={500} height={300} />
               <div>
-                <p className="lesson-phrase" lang="zh-Hans">{word.text}</p>
-                {pinyin && <p lang="zh-Latn">{word.pinyin}</p>}
-                <p lang={englishHelp ? "en" : "zh-Hans"}>{vocabulary.definition[preferences.support]}</p>
-                <blockquote lang="zh-Hans">{word.example}</blockquote>
-                {englishHelp && translation && <p lang="en">{vocabulary.exampleEn}</p>}
+                <p className="lesson-phrase" lang="zh-Hans" dir="ltr">{word.text}</p>
+                {pinyin && <p lang="zh-Latn" dir="ltr">{word.pinyin}</p>}
+                <p>{hasTranslation ? translated(vocabulary.definition.en) : vocabulary.definition.zh}</p>
+                <blockquote lang="zh-Hans" dir="ltr">{word.example}</blockquote>
+                {hasTranslation && translation && <p>{translated(vocabulary.exampleEn)}</p>}
                 {canSave && <Favorite key={vocabulary.key} locale={locale} wordKey={vocabulary.key}
                   saved={savedKeys.includes(vocabulary.key)} commit={(saved) => setSavedKeys((current) =>
                     saved ? [...current, vocabulary.key] : current.filter((key) => key !== vocabulary.key))} />}
@@ -230,24 +246,24 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
             <LessonAudio src={audio("dialogue")} t={t} />
             <div className="lesson-options">
               <label className="lesson-check"><input type="checkbox" checked={subtitle} onChange={(event) => setSubtitle(event.target.checked)} />{t.subtitle}</label>
-              {englishHelp && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
+              {hasTranslation && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
             </div>
-            {(subtitle || listeningAnswered || (englishHelp && translation)) && (
+            {(subtitle || listeningAnswered || (hasTranslation && translation)) && (
               <ul className="transcript">
                 {lesson.dialogue.map((line) => (
                   <li key={line.text}>
                     <strong>{t[line.role]}</strong>
-                    {(subtitle || listeningAnswered) && <span lang="zh-Hans">{line.text}</span>}
-                    {englishHelp && translation && <span>{line.en}</span>}
+                    {(subtitle || listeningAnswered) && <span lang="zh-Hans" dir="ltr">{line.text}</span>}
+                    {hasTranslation && translation && <span>{translated(line.en)}</span>}
                   </li>
                 ))}
               </ul>
             )}
             {lesson.questions.map((question, index) => (
               <div className="lesson-question" key={question.text}>
-                <p lang="zh-Hans">{question.text}</p>
-                {englishHelp && translation && <p>{question.en}</p>}
-                <div className="lesson-options" lang="zh-Hans">
+                <p lang="zh-Hans" dir="ltr">{question.text}</p>
+                {hasTranslation && translation && <p>{translated(question.en)}</p>}
+                <div className="lesson-options" lang="zh-Hans" dir="ltr">
                   {question.options.map((option, choice) => (
                     <button className="lesson-secondary" type="button" key={option}
                       aria-pressed={state.answers[index] === choice} onClick={() => {
@@ -265,7 +281,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               <ol>{lesson.questions.map((question) => <li key={question.text}>
                 <strong lang="zh-Hans" dir="ltr">{question.options[question.correct]}</strong>
                 <blockquote lang="zh-Hans" dir="ltr">{lesson.dialogue[question.evidence].text}</blockquote>
-                {englishHelp && translation && <p lang="en">{lesson.dialogue[question.evidence].en}</p>}
+                {hasTranslation && translation && <p>{translated(lesson.dialogue[question.evidence].en)}</p>}
               </li>)}</ol>
             </section>}
             <details className="lesson-listen-record">
@@ -285,13 +301,13 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               ))}
             </div>
             <div className="lesson-phrase-box">
-              <p className="lesson-phrase" lang="zh-Hans">{phrase.text}</p>
-              {pinyin && <p lang="zh-Latn">{phrase.pinyin}</p>}
-              {englishHelp && translation && <p>{phrase.en}</p>}
+              <p className="lesson-phrase" lang="zh-Hans" dir="ltr">{phrase.text}</p>
+              {pinyin && <p lang="zh-Latn" dir="ltr">{phrase.pinyin}</p>}
+              {hasTranslation && translation && <p>{translated(phrase.en)}</p>}
             </div>
             <div className="lesson-options">
               <label className="lesson-check"><input type="checkbox" checked={pinyin} onChange={(event) => setPinyin(event.target.checked)} />{t.pinyin}</label>
-              {englishHelp && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
+              {hasTranslation && <label className="lesson-check"><input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}</label>}
             </div>
             <LessonAudio key={phrase.id} src={audio(phrase.id)} t={t} />
             <LessonRecorder key={`record-${phrase.id}`} t={t} onRecorded={() => setRecorded(true)} />
@@ -307,7 +323,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               </div>
             )}
             {!showAi && <p>{t.practicePrompt}</p>}
-            {englishHelp && (
+            {hasTranslation && (
               <label className="lesson-check">
                 <input type="checkbox" checked={translation} onChange={(event) => setTranslation(event.target.checked)} />{t.translation}
               </label>
@@ -316,19 +332,19 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
               <>
                 <p className="status">{t.aiDisclosure}</p>
                 <ul className="transcript">
-                  <li><strong>{t.server}</strong><span lang="zh-Hans">{lesson.scenario[0].prompt}</span>
-                    {englishHelp && translation && <span>{lesson.scenario[0].en}</span>}</li>
+                  <li><strong>{t.server}</strong><span lang="zh-Hans" dir="ltr">{lesson.scenario[0].prompt}</span>
+                    {hasTranslation && translation && <span>{translated(lesson.scenario[0].en)}</span>}</li>
                   {state.turns.map((turn, index) => (
                     <li key={index}>
-                      <strong>{t.customer}</strong><span lang="zh-Hans">{turn.order}</span>
-                      <strong>{t.server}</strong><span lang="zh-Hans">{turn.reply}</span>
+                      <strong>{t.customer}</strong><span lang="zh-Hans" dir="ltr">{turn.order}</span>
+                      <strong>{t.server}</strong><span lang="zh-Hans" dir="ltr">{turn.reply}</span>
                     </li>
                   ))}
                 </ul>
                 {state.turns.length >= 2 ? <p role="status">{t.aiDone}</p> : (
                   <form className="preferences lesson-reply" method="post" onSubmit={sendReply}>
                     <label htmlFor="order">{t.aiReply}</label>
-                    <input id="order" lang="zh-Hans" value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={160} required />
+                    <input id="order" lang="zh-Hans" dir="ltr" value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={160} required />
                     <button className="button" type="submit" disabled={sending}>{sending ? t.sending : t.send}</button>
                   </form>
                 )}
@@ -340,18 +356,18 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                   const selected = turn.options[state.guided[index]];
                   return (
                     <div className="lesson-question" key={turn.prompt}>
-                      <p><strong>{t.server}</strong> <span lang="zh-Hans">{turn.prompt}</span></p>
-                      {englishHelp && translation && <p>{turn.en}</p>}
+                      <p><strong>{t.server}</strong> <span lang="zh-Hans" dir="ltr">{turn.prompt}</span></p>
+                      {hasTranslation && translation && <p>{translated(turn.en)}</p>}
                       {selected ? (
                         <>
-                          <p><strong>{t.customer}</strong> <span lang="zh-Hans">{selected.text}</span></p>
-                          <p><strong>{t.server}</strong> <span lang="zh-Hans">{selected.reply}</span></p>
-                          {englishHelp && translation && <p>{selected.en}</p>}
+                          <p><strong>{t.customer}</strong> <span lang="zh-Hans" dir="ltr">{selected.text}</span></p>
+                          <p><strong>{t.server}</strong> <span lang="zh-Hans" dir="ltr">{selected.reply}</span></p>
+                          {hasTranslation && translation && <p>{translated(selected.en)}</p>}
                         </>
                       ) : (
                         <div className="lesson-options" aria-label={t.response}>
                           {turn.options.map((option, choice) => (
-                            <button className="lesson-secondary" type="button" lang="zh-Hans" key={option.text}
+                            <button className="lesson-secondary" type="button" lang="zh-Hans" dir="ltr" key={option.text}
                               onClick={() => update({ guided: [...state.guided, choice] })}>{option.text}</button>
                           ))}
                         </div>
@@ -359,8 +375,8 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
                     </div>
                   );
                 })}
-                {guidedTotal && <p><strong>{t.server}</strong> <span lang="zh-Hans">一共{guidedTotal.text}元。</span>
-                  {englishHelp && translation && <> · {guidedTotal.number} yuan in total.</>}</p>}
+                {guidedTotal && <p><strong>{t.server}</strong> <span lang="zh-Hans" dir="ltr">一共{guidedTotal.text}元。</span>
+                  {hasTranslation && translation && <bdi lang={support}> · {priceCopy[support](guidedTotal.number)}</bdi>}</p>}
                 {state.guided.length === lesson.scenario.length && <p role="status">{t.guidedDone}</p>}
               </div>
             )}

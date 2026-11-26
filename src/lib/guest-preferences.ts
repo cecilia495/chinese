@@ -1,11 +1,12 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { isSupportLanguage, type SupportLanguage } from "./support-languages";
 
 const key = "zhongwenban:guest-preferences";
 const defaults = { support: "zh", pinyin: true, translation: false, level: "1" } as const;
 type Preferences = {
-  support: "zh" | "en";
+  support: SupportLanguage;
   pinyin: boolean;
   translation: boolean;
   level: "1" | "2" | "3";
@@ -35,7 +36,7 @@ export function useGuestPreferences(): Preferences {
   try {
     const value = JSON.parse(snapshot);
     return {
-      support: value?.support === "en" ? "en" : "zh",
+      support: isSupportLanguage(value?.support) ? value.support : "zh",
       pinyin: value?.pinyin !== false,
       translation: value?.translation === true,
       level: value?.level === "2" || value?.level === "3" ? value.level : "1",
