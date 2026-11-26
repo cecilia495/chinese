@@ -3,6 +3,7 @@
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
 import { interfaceText } from "@/lib/interface-text";
 import { diningTranslation } from "@/lib/dining-translations";
+import { diningAudio } from "@/lib/dining-audio";
 import { publicPath } from "@/lib/public-path";
 
 
@@ -179,7 +180,7 @@ export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites
   const guidedTotal = lesson.level === "3" && state.guided.length === 2
     ? scenarioTotal(state.guided[0], state.guided[1])
     : undefined;
-  const audio = (id: string) => publicPath(`/audio/dining/${lesson.level}/${id}.mp3`);
+  const audio = (id: string) => diningAudio(lesson.level, id);
 
   if (step >= t.steps.length) {
     return (

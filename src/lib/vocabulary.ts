@@ -1,4 +1,4 @@
-import { publicPath } from "@/lib/public-path";
+import { diningAudio } from "./dining-audio";
 import { getDiningLesson } from "./dining";
 
 const translations: Record<string, readonly [string, string]> = {
@@ -28,7 +28,7 @@ export function diningVocabulary(level: "1" | "2" | "3"): VocabularyEntry[] {
   if (!lesson) return [];
   return lesson.words.map(({ id, text, pinyin, en, example }) => ({
     key: `dining:${level}:${id}`, level, word: text, pinyin, definition: { en, zh: translations[id][0] },
-    example, exampleEn: translations[id][1], audio: publicPath(`/audio/dining/${level}/${id}.mp3`),
+    example, exampleEn: translations[id][1], audio: diningAudio(level, id),
   }));
 }
 
