@@ -18,6 +18,7 @@ export function LessonView({ lesson }: { lesson: DiningLesson }) {
     <h1>{title}</h1>
     <p>{goal}</p>
     <LevelPicker active={lesson.level} />
+    {lesson.level === "2" && <Link className="lesson-secondary" href="/learn/order/">{t("orderPractice")}</Link>}
     <DiningCourse lesson={lesson} locale="zh" viewerKey="guest" favorites={[]} canSave={false} aiAvailable={false} />
   </section>;
 }

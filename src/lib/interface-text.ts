@@ -1,6 +1,14 @@
 import type { SupportLanguage } from "./support-languages";
 
 const labels = {
+  orderPractice: ["数量与价格练习", "Practise quantities and prices", "Quantités et prix", "Количество и цена", "تدرّب على الكميات والأسعار", "Practicar cantidades y precios"],
+  orderBack: ["返回 HSK 2 课程", "Back to the HSK 2 lesson", "Retour à la leçon HSK 2", "К уроку HSK 2", "العودة إلى درس HSK 2", "Volver a la lección HSK 2"],
+  orderChoose: ["听店员说话。先说出你想要几个包子，再选择数量。", "Listen to the server. Say how many buns you want, then pick a quantity.", "Écoutez le serveur. Dites combien de petits pains vous voulez, puis choisissez la quantité.", "Послушайте продавца. Скажите, сколько булочек хотите, затем выберите количество.", "استمع إلى النادل. قل كم قطعة تريد، ثم اختر الكمية.", "Escucha al camarero. Di cuántos bollos quieres y luego elige la cantidad."],
+  orderAsk: ["先用中文问价格，再听店员回答。", "Ask the price in Chinese, then listen to the reply.", "Demandez le prix en chinois, puis écoutez la réponse.", "Спросите цену по-китайски, затем послушайте ответ.", "اسأل عن السعر بالصينية، ثم استمع إلى الجواب.", "Pregunta el precio en chino y escucha la respuesta."],
+  orderPrice: ["店员说多少钱？", "What price did the server give?", "Quel prix a annoncé le serveur ?", "Какую цену назвал продавец?", "ما السعر الذي ذكره النادل؟", "¿Qué precio dijo el camarero?"],
+  orderConfirm: ["用中文确认数量，再听示范并录音对比。", "Confirm the quantity in Chinese, then listen to the example and compare your recording.", "Confirmez la quantité en chinois, puis écoutez l’exemple et comparez votre enregistrement.", "Подтвердите количество по-китайски, затем послушайте образец и сравните запись.", "أكّد الكمية بالصينية، ثم استمع إلى المثال وقارنه بتسجيلك.", "Confirma la cantidad en chino, escucha el ejemplo y compáralo con tu grabación."],
+  orderComplete: ["你核对了价格。", "You checked the price.", "Vous avez vérifié le prix.", "Вы проверили цену.", "تحقّقت من السعر.", "Has comprobado el precio."],
+
   speak: ["开始说中文", "Start speaking Chinese", "Commencer à parler chinois", "Начать говорить по-китайски", "ابدأ التحدّث بالصينية", "Empezar a hablar chino"],
   resume: ["继续练习", "Continue practice", "Reprendre la pratique", "Продолжить практику", "تابع التمرين", "Continuar la práctica"],
   firstVisit: ["先选语言和程度", "Choose a language and level", "Choisir la langue et le niveau", "Выберите язык и уровень", "اختر اللغة والمستوى", "Elige un idioma y un nivel"],
