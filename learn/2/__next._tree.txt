@@ -1,5 +1,5 @@
-:HL["/chinese/_next/static/css/495efd0a7180c782.css","style"]
+:HL["/chinese/_next/static/css/06d3d279ea4c3d0b.css","style"]
 3:[["children",{"s":"__PAGE__","h":160}]]
-2:[["children",{"s":{"n":"level","t":"d","k":"2","s":[]},"h":96,"c":"$Q3"}]]
+2:[["children",{"s":{"n":"level","t":"d","k":"2","s":["change-order","food-drink","order"]},"h":96,"c":"$Q3"}]]
 1:[["children",{"s":"learn","h":96,"c":"$Q2"}]]
-0:{"b":"TXYL0ONIRlX2cnREoJ1HR","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"QZVaOKGGjHIMC9VxmjJ58","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
