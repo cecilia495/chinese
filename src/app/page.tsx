@@ -36,6 +36,7 @@ export default function Home() {
       </Link>
       <nav className="lesson-options" aria-label={t("learningNav")}>
         <Link className="lesson-secondary" href="/topics/">{t("topics")}</Link>
+        <Link className="lesson-secondary" href="/activities/">{t("activities")}</Link>
         <Link className="lesson-secondary" href="/talk/">{t("free")} · {t("developing")}</Link>
         <Link className="lesson-secondary" href="/my-learning/">{t("learning")}</Link>
       </nav>

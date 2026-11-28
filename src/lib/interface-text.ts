@@ -1,6 +1,15 @@
 import type { SupportLanguage } from "./support-languages";
 
 const labels = {
+  activities: ["口语活动", "Speaking activities", "Activités orales", "Устная практика", "أنشطة التحدّث", "Actividades orales"],
+  activitiesNote: ["听中文情景、开口回应，再用选择题核对。可录音回听。", "Listen to the scene, say your reply and check your understanding. You can record and listen back.", "Écoutez la scène, répondez à voix haute et vérifiez votre compréhension. Vous pouvez vous enregistrer et vous réécouter.", "Послушайте сцену, ответьте вслух и проверьте понимание. Можно записать и прослушать свой ответ.", "استمع إلى الموقف، وأجب بصوت عالٍ، ثم تحقّق من فهمك. يمكنك التسجيل والاستماع إلى إجابتك.", "Escucha la escena, responde en voz alta y comprueba lo que entendiste. Puedes grabarte y escucharte."],
+  activityOrder: ["说明要几个包子，问价并核对报价。", "Order some buns, ask the price and check the total.", "Commandez des petits pains, demandez le prix et vérifiez le total.", "Закажите булочки, спросите цену и проверьте сумму.", "اطلب بعض الكعكات، واسأل عن السعر وتحقّق من المجموع.", "Pide unos bollos, pregunta el precio y comprueba el total."],
+  activityChange: ["说明饮料太甜，请求换水并纠正误会。", "Explain that the drink is too sweet, ask for water and clear up a misunderstanding.", "Expliquez que la boisson est trop sucrée, demandez de l’eau et corrigez un malentendu.", "Объясните, что напиток слишком сладкий, попросите воду и исправьте недоразумение.", "اشرح أن المشروب حلو أكثر من اللازم، واطلب الماء، وصحّح سوء الفهم.", "Explica que la bebida es demasiado dulce, pide agua y aclara el malentendido."],
+  activityChecked: ["情景选择已核对", "Scenario choices checked", "Choix de la situation vérifiés", "Ответы в ситуации проверены", "تم التحقّق من اختياراتك", "Respuestas de la situación comprobadas"],
+  activityStart: ["开始活动", "Start activity", "Commencer l’activité", "Начать упражнение", "ابدأ النشاط", "Empezar la actividad"],
+  activityRetry: ["再练一次", "Practise again", "S’entraîner à nouveau", "Повторить упражнение", "تدرّب مرة أخرى", "Volver a practicar"],
+  activityLesson: ["打开对应课程", "Open the related lesson", "Ouvrir la leçon associée", "Открыть урок", "افتح الدرس المرتبط", "Abrir la lección relacionada"],
+
   changeOrder: ["说明原因与换饮料", "Explain and change a drink", "Expliquer et changer de boisson", "Объяснить причину и заменить напиток", "اشرح السبب وغيّر المشروب", "Explicar y cambiar una bebida"],
   changeBack: ["返回 HSK 3 课程", "Back to the HSK 3 lesson", "Retour à la leçon HSK 3", "К уроку HSK 3", "العودة إلى درس HSK 3", "Volver a la lección HSK 3"],
   changeGoal: ["饮料太甜了。告诉店员原因，请他换成水。先开口说，再选一句。", "The drink is too sweet. Tell the server why and ask for water instead. Say it aloud, then choose a reply.", "La boisson est trop sucrée. Expliquez pourquoi et demandez de l’eau à la place. Dites-le à voix haute, puis choisissez une réponse.", "Напиток слишком сладкий. Объясните причину и попросите заменить его водой. Скажите это вслух, затем выберите ответ.", "المشروب حلو أكثر من اللازم. اشرح السبب واطلب ماءً بدلًا منه. قل ذلك بصوت عالٍ ثم اختر ردًّا.", "La bebida es demasiado dulce. Explica el motivo y pide agua. Dilo en voz alta y elige una respuesta."],

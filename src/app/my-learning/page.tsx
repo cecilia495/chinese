@@ -11,5 +11,6 @@ export default function MyLearningPage() {
     <Link className="back" href="/">{t("back")}</Link>
     <h1>{t("learning")}</h1>
     <GuestLearning />
+    <Link className="lesson-secondary" href="/activities/">{t("activities")}</Link>
   </section>;
 }

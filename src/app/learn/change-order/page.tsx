@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useInterface } from "@/app/components/site-frame";
+import { recordActivityCompletion } from "@/lib/activity-progress";
 import { diningCopy } from "@/lib/dining-i18n";
 import { changeOrderScript } from "@/lib/hsk3-change-order";
 import { publicPath } from "@/lib/public-path";
@@ -32,6 +33,7 @@ export default function ChangeOrderPractice() {
   return <section className="subpage lesson practice">
     <Link className="back" href="/learn/3/">{t("changeBack")}</Link>
     <h1>{t("changeOrder")}</h1>
+    <Link className="lesson-secondary" href="/activities/">{t("activities")}</Link>
     <section className="panel lesson-question">
       <p>{t("changeGoal")}</p>
       <LessonAudio src={source("opening")} t={labels} />
@@ -51,7 +53,10 @@ export default function ChangeOrderPractice() {
         {corrections.map((reply, index) => <button className="lesson-secondary" type="button"
           key={reply} aria-pressed={index === correction}
           data-answer={index === correction && index === 0 ? "incorrect" : undefined}
-          onClick={() => setCorrection(index)}>{reply}</button>)}
+          onClick={() => {
+            setCorrection(index);
+            if (index === 1) recordActivityCompletion("change-order");
+          }}>{reply}</button>)}
       </div>
       {correction === 0 && <p role="status">{t("changeWrongDrink")}</p>}
       {confirmed && <LessonAudio src={source("correction")} t={labels} example />}
