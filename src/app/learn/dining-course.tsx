@@ -3,6 +3,7 @@
 import { saveGuestPreferences, useGuestPreferences } from "@/lib/guest-preferences";
 import { interfaceText } from "@/lib/interface-text";
 import { diningTranslation } from "@/lib/dining-translations";
+import { courseSnapshot, initialState, saveCourse, serverSnapshot, subscribe, type CourseState } from "@/lib/dining-course-state";
 import { diningAudio } from "@/lib/dining-audio";
 import { publicPath } from "@/lib/public-path";
 
@@ -30,55 +31,7 @@ const priceCopy = {
   es: (number: number) => `${number} yuanes en total`,
 };
 
-type Answer = number | null;
-type Turn = { order: string; reply: string };
-type CourseState = {
-  step: number;
-  completionId?: string;
-  finishedAttempts?: number;
-  word: number;
-  repeat: number;
-  completed: number[];
-  answers: Answer[];
-  guided: number[];
-  turns: Turn[];
-};
 type Props = { lesson: DiningLesson; locale: Locale; viewerKey: string; aiAvailable: boolean; favorites: string[]; canSave: boolean };
-
-const storageEvent = "dining-course-state";
-const initialState: CourseState = {
-  step: 0, word: 0, repeat: 0, completed: [], answers: [], guided: [], turns: [],
-};
-const initialSnapshot = JSON.stringify(initialState);
-const memory = new Map<string, string>();
-
-export function subscribe(callback: () => void) {
-  window.addEventListener(storageEvent, callback);
-  return () => window.removeEventListener(storageEvent, callback);
-}
-
-function serverSnapshot() {
-  return initialSnapshot;
-}
-
-export function courseSnapshot(key: string) {
-  try {
-    return sessionStorage.getItem(key) ?? memory.get(key) ?? initialSnapshot;
-  } catch {
-    return memory.get(key) ?? initialSnapshot;
-  }
-}
-
-function saveCourse(key: string, state: CourseState) {
-  const snapshot = JSON.stringify(state);
-  memory.set(key, snapshot);
-  try {
-    sessionStorage.setItem(key, snapshot);
-  } catch {
-    // The course remains usable in memory if storage is blocked.
-  }
-  window.dispatchEvent(new Event(storageEvent));
-}
 
 export function DiningCourse({ lesson, locale, viewerKey, aiAvailable, favorites, canSave }: Props) {
 

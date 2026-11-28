@@ -6,7 +6,7 @@ import { useGuestPreferences } from "@/lib/guest-preferences";
 import { useInterface } from "@/app/components/site-frame";
 import { diningTranslation } from "@/lib/dining-translations";
 import { getDiningLesson } from "@/lib/dining";
-import { courseSnapshot, subscribe } from "../learn/dining-course";
+import { courseSnapshot, subscribe } from "@/lib/dining-course-state";
 
 const levels = ["1", "2", "3"] as const;
 

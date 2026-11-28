@@ -293,3 +293,32 @@ blockquote { margin: 1rem 0 0; padding: .7rem 1rem; border-inline-start: 3px sol
   border-color: #a8483b;
   color: #782d25;
 }
+
+.home-entry {
+  max-width: 58rem;
+  margin-inline: auto;
+  padding-block-end: 3rem;
+}
+.home-entry .intro .button {
+  margin-block: 1.25rem .8rem;
+}
+.home-entry .intro .lesson-options {
+  justify-content: center;
+}
+.home-entry-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 26rem;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+.home-setup {
+  margin-block-start: 1rem;
+}
+.home-setup summary {
+  cursor: pointer;
+}
+.home-setup form {
+  margin-block-start: 1rem;
+}

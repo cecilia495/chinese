@@ -1,6 +1,12 @@
 import type { SupportLanguage } from "./support-languages";
 
 const labels = {
+  speak: ["开始说中文", "Start speaking Chinese", "Commencer à parler chinois", "Начать говорить по-китайски", "ابدأ التحدّث بالصينية", "Empezar a hablar chino"],
+  resume: ["继续练习", "Continue practice", "Reprendre la pratique", "Продолжить практику", "تابع التمرين", "Continuar la práctica"],
+  firstVisit: ["先选语言和程度", "Choose a language and level", "Choisir la langue et le niveau", "Выберите язык и уровень", "اختر اللغة والمستوى", "Elige un idioma y un nivel"],
+  saveStart: ["保存选择", "Save choices", "Enregistrer les choix", "Сохранить выбор", "احفظ اختياراتك", "Guardar preferencias"],
+  skipSetup: ["跳过设置", "Skip setup", "Passer la configuration", "Пропустить настройку", "تخطّ الإعداد", "Omitir configuración"],
+
   home: ["首页", "Home", "Accueil", "Главная", "الرئيسية", "Inicio"],
   back: ["返回首页", "Back to home", "Retour à l’accueil", "На главную", "العودة إلى الرئيسية", "Volver al inicio"],
   skip: ["跳到主内容", "Skip to content", "Aller au contenu", "К содержанию", "انتقل إلى المحتوى", "Saltar al contenido"],
